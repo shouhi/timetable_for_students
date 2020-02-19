@@ -105,13 +105,15 @@ with SingleTickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  constraints: BoxConstraints(maxWidth: 29.0 + 57.8 * 5),
+//                  constraints: BoxConstraints(maxWidth: 29.0 + 57.8 * 5),
                   color: Colors.black12,
                   padding: EdgeInsets.only(left: 29.0),
                   child: GridView.count(
                     crossAxisCount: 5,
+                    physics: ScrollPhysics(),
                     shrinkWrap: true,
-                    childAspectRatio: 60 / 36,
+//                    childAspectRatio: 60 / 36,
+                    childAspectRatio: (MediaQuery.of(context).size.width - 50*2 - 29) / 5 / 30, //画面幅に応じて幅可変、高さは30で固定
                     children: daySet(),
                   ),
                 ),
@@ -124,17 +126,21 @@ with SingleTickerProviderStateMixin {
                         constraints: BoxConstraints.expand(width: 29.0),
                         child: GridView.count(
                           crossAxisCount: 1,
+                          physics: ScrollPhysics(),
                           shrinkWrap: true,
-                          childAspectRatio: 30.0 / 99.2,
+                          childAspectRatio: 29.0 / 85.6,
                           children: periodSet(),
                         ),
                       ),
                       Container(
-                        constraints: BoxConstraints.expand(width: 57.8 * 5),
-                        child: GridView.count(
+//                        constraints: BoxConstraints.expand(width: 57.8 * 5),
+                          constraints: BoxConstraints.expand(width: (MediaQuery.of(context).size.width - 50*2 -29 + 58)),
+                          child: GridView.count(
                           crossAxisCount: 5,
+                          physics: ScrollPhysics(),
                           shrinkWrap: true,
-                          childAspectRatio: 60 / 99.6,
+//                          childAspectRatio: 60 / 99.6,
+                          childAspectRatio: (MediaQuery.of(context).size.width - 50*2 - 29 + 58) / 5 / 85.6,
                           children: classSet(context),
                         ),
                       ),
@@ -1461,7 +1467,7 @@ class ConnectToDatabase {
   //クラウドのデータベース（Firebase Realtime Database）に接続
   Future<DataSnapshot> toCloud() async {
 
-    DatabaseReference _reference =  FirebaseDatabase.instance.reference().child('classes');
+    DatabaseReference _reference =  FirebaseDatabase.instance.reference().child('classes').child('engineering').child('ele_info_phys').child('5_semester');
 
     return await _reference.once();
   }
