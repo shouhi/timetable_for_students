@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "717381741525",
+    "firebase_url": "https://timetable-for-students-e5418.firebaseio.com",
+    "project_id": "timetable-for-students-e5418",
+    "storage_bucket": "timetable-for-students-e5418.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717381741525:android:eefabc13b048177ef16b5c",
+        "android_client_info": {
+          "package_name": "com.example.timetable_for_students"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717381741525-rv4raj4ga41ncru1s462uqbuai39oj9m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY2XodvOuoRkVmQlREImrVDcNVbkbk2GQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717381741525-rv4raj4ga41ncru1s462uqbuai39oj9m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
