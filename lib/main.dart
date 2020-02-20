@@ -1261,12 +1261,6 @@ with SingleTickerProviderStateMixin {
 
   Future<void> getDefaultClasses() async {
 
-//    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes', 'engineering', 'ele_info_phys', '5_semester']);
-//    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes']);
-//    List<dynamic> facultyList = snapshot.value.toString();
-//    debugPrint(snapshot.value.toString()); //NOTE: 階層構造のキーを取得する方法を模索していたとこ
-
-
     List<Widget> list = <Widget>[];
 
     DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes', 'engineering', 'ele_info_phys', '5_semester']);
@@ -1433,27 +1427,6 @@ class ConstantValues {
     return bottomNavigationBarItems;
   }
 }
-
-//開閉式メニューの要素となるインスタンスを生成するクラス
-class ClassListItem {
-  bool isExpanded;
-  String title;
-  String content;
-
-  ClassListItem({this.isExpanded: false, this.title, this.content});
-}
-
-//ClassListItemからExpansionPanelを作成する関数
-ExpansionPanel _createPanel(ClassListItem item) {
-  return ExpansionPanel(
-    headerBuilder: (BuildContext context, bool isExpanded) {
-      return Text(item.title);
-    },
-    body: Text(item.content),
-    isExpanded: item.isExpanded,
-  );
-}
-
 
 //データベースに接続するための処理をまとめたクラス
 class ConnectToDatabase {
