@@ -59,9 +59,9 @@ with SingleTickerProviderStateMixin {
   List<int> _tableSetColorIds = List(25);
 
   List<Widget> _intensiveClassList = <Widget>[];
+  List<TextEditingController> _memoController = <TextEditingController>[];
   final TextEditingController _controllerA = TextEditingController();
   final TextEditingController _controllerB = TextEditingController();
-  final TextEditingController _memoController = TextEditingController();
 
   @override
   void initState()  {
@@ -112,7 +112,6 @@ with SingleTickerProviderStateMixin {
                     crossAxisCount: 5,
                     physics: ScrollPhysics(),
                     shrinkWrap: true,
-//                    childAspectRatio: 60 / 36,
                     childAspectRatio: (MediaQuery.of(context).size.width - 50*2 - 29) / 5 / 30, //画面幅に応じて幅可変、高さは30で固定
                     children: daySet(),
                   ),
@@ -133,13 +132,11 @@ with SingleTickerProviderStateMixin {
                         ),
                       ),
                       Container(
-//                        constraints: BoxConstraints.expand(width: 57.8 * 5),
                           constraints: BoxConstraints.expand(width: (MediaQuery.of(context).size.width - 50*2 -29 + 58)),
                           child: GridView.count(
                           crossAxisCount: 5,
                           physics: ScrollPhysics(),
                           shrinkWrap: true,
-//                          childAspectRatio: 60 / 99.6,
                           childAspectRatio: (MediaQuery.of(context).size.width - 50*2 - 29 + 58) / 5 / 85.6,
                           children: classSet(context),
                         ),
@@ -293,6 +290,7 @@ with SingleTickerProviderStateMixin {
           title: Text(
             '授業を選択してください。',
             style: TextStyle(
+              fontSize: 20.0,
               decoration: TextDecoration.underline,
             ),
           ),
@@ -410,7 +408,7 @@ with SingleTickerProviderStateMixin {
       ),
     ];
 
-    DataSnapshot snapshot = await ConnectToDatabase().toCloud();
+    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes', 'engineering', 'ele_info_phys', '4_semester']);
     List<dynamic> cloudClasses = await snapshot.value;
 
     for (Map map in cloudClasses) {
@@ -558,7 +556,7 @@ with SingleTickerProviderStateMixin {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: Text('【登録完了】'),
-          content: Text('授業の新規登録が完了しました。登録した授業をMy時間割に追加することができます。'),
+          content: Text('授業の新規登録が完了しました。'),
           actions: <Widget>[
             FlatButton(
               child: Text('閉じる'),
@@ -594,7 +592,7 @@ with SingleTickerProviderStateMixin {
     
     Database database = await ConnectToDatabase().toLocal('intensiveClassData');
     
-    String query = 'UPDATE intensiveClassData set memo = "' + _memoController.text + '"where id = $id';
+    String query = 'UPDATE intensiveClassData set memo = "' + _memoController[id-1].text + '"where id = $id';
 
     await database.transaction((txn) async {
       txn.rawUpdate(query);
@@ -615,7 +613,7 @@ with SingleTickerProviderStateMixin {
 
     List<Map> result = await database.rawQuery('SELECT * FROM intensiveClassData WHERE id = $id');
 
-    _memoController.text = result[0]['memo'];
+    _memoController[id-1].text = result[0]['memo'] ?? '';
 
     showDialog(
       context: this.context,
@@ -650,7 +648,7 @@ with SingleTickerProviderStateMixin {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
-                  controller: _memoController,
+                  controller: _memoController[id-1],
                   decoration: InputDecoration(
                     hintText: 'メモを追加',
                   ),
@@ -726,7 +724,6 @@ with SingleTickerProviderStateMixin {
       if (list.length > 0) {
         _intensiveClassList = list;
       }
-
       //集中講義が登録されていないとき
       else {
         _intensiveClassList = [Align(
@@ -839,6 +836,7 @@ with SingleTickerProviderStateMixin {
                       onPressed: () {
                         registIntensiveClass(context);
                         getIntensiveClasses();
+                        Navigator.pop(context);
                       },
                     )
                   ],
@@ -848,6 +846,11 @@ with SingleTickerProviderStateMixin {
           ),
         ),
       );
+
+
+      for (var i = 0; i < _intensiveClassList.length - 1; i++) {
+        _memoController.add(TextEditingController());
+      }
     });
   }
 }
@@ -1238,11 +1241,11 @@ with SingleTickerProviderStateMixin {
         controller: _tabController,
         children: <Widget>[
           ListView(
-        shrinkWrap: true,
-            children: _defaultClasses,
+            shrinkWrap: true,
+            children: _defaultClasses, //_defaultClassesをExpansionPanelListにする
           ),
           ListView(
-        shrinkWrap: true,
+            shrinkWrap: true,
             children: _customClasses,
           ),
         ],
@@ -1257,9 +1260,16 @@ with SingleTickerProviderStateMixin {
   }
 
   Future<void> getDefaultClasses() async {
+
+//    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes', 'engineering', 'ele_info_phys', '5_semester']);
+//    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes']);
+//    List<dynamic> facultyList = snapshot.value.toString();
+//    debugPrint(snapshot.value.toString()); //NOTE: 階層構造のキーを取得する方法を模索していたとこ
+
+
     List<Widget> list = <Widget>[];
 
-    DataSnapshot snapshot = await ConnectToDatabase().toCloud();
+    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes', 'engineering', 'ele_info_phys', '5_semester']);
 
     List<dynamic> classList = await snapshot.value;
     for (Map classData in classList) {
@@ -1424,6 +1434,27 @@ class ConstantValues {
   }
 }
 
+//開閉式メニューの要素となるインスタンスを生成するクラス
+class ClassListItem {
+  bool isExpanded;
+  String title;
+  String content;
+
+  ClassListItem({this.isExpanded: false, this.title, this.content});
+}
+
+//ClassListItemからExpansionPanelを作成する関数
+ExpansionPanel _createPanel(ClassListItem item) {
+  return ExpansionPanel(
+    headerBuilder: (BuildContext context, bool isExpanded) {
+      return Text(item.title);
+    },
+    body: Text(item.content),
+    isExpanded: item.isExpanded,
+  );
+}
+
+
 //データベースに接続するための処理をまとめたクラス
 class ConnectToDatabase {
 
@@ -1455,7 +1486,7 @@ class ConnectToDatabase {
     }
 
     String dbPath = await getDatabasesPath();
-    String path = join(dbPath, "timetable_for_students.db");
+    String path = join(dbPath, "timetable_for_students2.db");
 
     Database database = await openDatabase(path, version: 1,onCreate: (Database db, int version) async {
       await db.execute('CREATE TABLE IF NOT EXISTS $databaseTableName ($_query)');
@@ -1465,9 +1496,13 @@ class ConnectToDatabase {
   }
 
   //クラウドのデータベース（Firebase Realtime Database）に接続
-  Future<DataSnapshot> toCloud() async {
+  Future<DataSnapshot> toCloud(List<String> childList) async {
 
-    DatabaseReference _reference =  FirebaseDatabase.instance.reference().child('classes').child('engineering').child('ele_info_phys').child('5_semester');
+    DatabaseReference _reference =  FirebaseDatabase.instance.reference();
+
+    for (var i = 0; i < childList.length; i++) {
+      _reference = _reference.child(childList[i]);
+    }
 
     return await _reference.once();
   }
