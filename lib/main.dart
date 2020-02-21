@@ -1196,10 +1196,12 @@ class _ClassRegistViewState extends State<ClassRegistView> {
 //クラウドデータベースはFirebase Realtime Databaseを用いる。
 class ClassConfirmView extends StatefulWidget {
 
-  ClassConfirmView({Key key}) : super(key: key);
+  final int hierarchyDepth;
+
+  ClassConfirmView({Key key, this.hierarchyDepth: 3}) : super(key: key);
 
   @override
-  _ClassConfirmViewState createState() => _ClassConfirmViewState();
+  _ClassConfirmViewState createState() => _ClassConfirmViewState(hierarchyDepth);
 }
 
 class _ClassConfirmViewState extends State<ClassConfirmView>
@@ -1210,13 +1212,24 @@ with SingleTickerProviderStateMixin {
     Tab(text: '登録した授業'),
   ];
 
+  final List<String> _hierarchy = <String>[
+//    'classes',
+    'engineering',
+    'ele_info_phys',
+    '5_semester',
+  ];
+
+  final int hierarchyDepth;
+
   TabController _tabController;
   List<Widget> _defaultClasses = <Widget>[];
   List<Widget> _customClasses = <Widget>[];
 
+  _ClassConfirmViewState(this.hierarchyDepth);
+
   @override
   void initState() {
-    getDefaultClasses();
+    getDefaultClasses(hierarchyDepth);
     getCustomClasses();
     _tabController = TabController(
       vsync: this,
@@ -1259,21 +1272,50 @@ with SingleTickerProviderStateMixin {
     );
   }
 
-  Future<void> getDefaultClasses() async {
+  Future<void> getDefaultClasses(int hierarchyDepth) async {
 
     List<Widget> list = <Widget>[];
 
-    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes', 'engineering', 'ele_info_phys', '5_semester']);
+    List<String> depth = <String>['classes'];
+    for (var i = 0; i < hierarchyDepth + 1 && i < _hierarchy.length; i++) {
+      depth.add(_hierarchy[i]);
+    }
 
-    List<dynamic> classList = await snapshot.value;
-    for (Map classData in classList) {
-      if (classData != null) {
-        list.add(
-          ListTile(
-            title: Text(classData['className']),
-            subtitle: Text('（' + classData['teacherName'] + '）'),
+    DataSnapshot snapshot = await ConnectToDatabase().toCloud(depth);
+
+    if (hierarchyDepth < _hierarchy.length) {
+      String title = snapshot.key;
+
+      list.add(
+        ListTile(
+          title: Text(
+            title,
+            style: TextStyle(fontSize: 28.0)
           ),
-        );
+          onTap: () {
+            Navigator.push(
+              this.context,
+              MaterialPageRoute(builder: (context) =>
+                  ClassConfirmView(hierarchyDepth: hierarchyDepth + 1,),
+              ),
+            );
+          },
+          contentPadding: EdgeInsets.all(20.0),
+        ),
+      );
+    }
+    else {
+      List<dynamic> classList = await snapshot.value;
+
+      for (Map classData in classList) {
+        if (classData != null) {
+          list.add(
+            ListTile(
+              title: Text(classData['className']),
+              subtitle: Text('（' + classData['teacherName'] + '）'),
+            ),
+          );
+        }
       }
     }
 
