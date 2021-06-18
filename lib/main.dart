@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
 //ホーム画面。
 //登録した時間割の閲覧。
 class TimeTableView extends StatefulWidget {
-
   TimeTableView({Key key}) : super(key: key);
 
   @override
@@ -39,14 +38,17 @@ class TimeTableView extends StatefulWidget {
 }
 
 class _TimeTableViewState extends State<TimeTableView>
-with SingleTickerProviderStateMixin {
-
+    with SingleTickerProviderStateMixin {
   final List<Tab> _tabs = <Tab>[
     Tab(text: '１週間の時間割'),
     Tab(text: '集中講義'),
   ];
   final List<String> _days = [
-    '月', '火', '水', '木', '金',
+    '月',
+    '火',
+    '水',
+    '木',
+    '金',
   ];
 
   TabController _tabController;
@@ -64,7 +66,7 @@ with SingleTickerProviderStateMixin {
   final TextEditingController _controllerB = TextEditingController();
 
   @override
-  void initState()  {
+  void initState() {
     _tabController = TabController(
       vsync: this,
       length: _tabs.length,
@@ -82,7 +84,6 @@ with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         title: Text('時間割アプリ'),
         bottom: TabBar(
@@ -90,7 +91,6 @@ with SingleTickerProviderStateMixin {
           tabs: _tabs,
         ),
       ),
-
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
@@ -112,7 +112,10 @@ with SingleTickerProviderStateMixin {
                     crossAxisCount: 5,
                     physics: ScrollPhysics(),
                     shrinkWrap: true,
-                    childAspectRatio: (MediaQuery.of(context).size.width - 50*2 - 29) / 5 / 30, //画面幅に応じて幅可変、高さは30で固定
+                    childAspectRatio:
+                        (MediaQuery.of(context).size.width - 50 * 2 - 29) /
+                            5 /
+                            30, //画面幅に応じて幅可変、高さは30で固定
                     children: daySet(),
                   ),
                 ),
@@ -132,12 +135,21 @@ with SingleTickerProviderStateMixin {
                         ),
                       ),
                       Container(
-                          constraints: BoxConstraints.expand(width: (MediaQuery.of(context).size.width - 50*2 -29 + 58)),
-                          child: GridView.count(
+                        constraints: BoxConstraints.expand(
+                            width: (MediaQuery.of(context).size.width -
+                                50 * 2 -
+                                29 +
+                                58)),
+                        child: GridView.count(
                           crossAxisCount: 5,
                           physics: ScrollPhysics(),
                           shrinkWrap: true,
-                          childAspectRatio: (MediaQuery.of(context).size.width - 50*2 - 29 + 58) / 5 / 85.6,
+                          childAspectRatio: (MediaQuery.of(context).size.width -
+                                  50 * 2 -
+                                  29 +
+                                  58) /
+                              5 /
+                              85.6,
                           children: classSet(context),
                         ),
                       ),
@@ -153,8 +165,6 @@ with SingleTickerProviderStateMixin {
           ),
         ],
       ),
-
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         items: ConstantValues().getBottomNavigationBarItems(),
@@ -166,8 +176,7 @@ with SingleTickerProviderStateMixin {
   void tapBottomIcon(int value, BuildContext context) {
     if (value == 1) {
       Navigator.pushNamed(context, '/regist');
-    }
-    else if(value == 2) {
+    } else if (value == 2) {
       Navigator.pushNamed(context, '/confirm');
     }
   }
@@ -190,7 +199,7 @@ with SingleTickerProviderStateMixin {
           ),
           decoration: BoxDecoration(
             border: Border(
-                left: BorderSide(color: Color.fromARGB(100, 0, 0, 0)),
+              left: BorderSide(color: Color.fromARGB(100, 0, 0, 0)),
             ),
           ),
         ),
@@ -241,13 +250,18 @@ with SingleTickerProviderStateMixin {
             color: ConstantValues().getColorList(150)[_tableSetColorIds[i]],
             padding: EdgeInsets.all(0.0),
             onPressed: () => tapTable(context, i),
+            onLongPress: () {
+              print(i);
+            },
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    _tableSetClassNames[i].length < 21 ? _tableSetClassNames[i] : _tableSetClassNames[i].substring(0, 20),
+                    _tableSetClassNames[i].length < 21
+                        ? _tableSetClassNames[i]
+                        : _tableSetClassNames[i].substring(0, 20),
                     style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.w400,
@@ -255,7 +269,9 @@ with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Text(
-                    _tableSetTeacherNames[i].length < 15 ? _tableSetTeacherNames[i] : _tableSetTeacherNames[i].substring(0, 15),
+                    _tableSetTeacherNames[i].length < 15
+                        ? _tableSetTeacherNames[i]
+                        : _tableSetTeacherNames[i].substring(0, 15),
                     style: TextStyle(
                       fontSize: 9.0,
                       fontWeight: FontWeight.w400,
@@ -280,7 +296,6 @@ with SingleTickerProviderStateMixin {
   }
 
   Future<void> tapTable(BuildContext context, int i) async {
-
     //テーブルが空の場合
     if (_tableSetClassNames[i] == '') {
       await showRegistedClasses(context);
@@ -310,24 +325,25 @@ with SingleTickerProviderStateMixin {
 
       if (i < 5) {
         _periodIndex = 1;
-      }
-      else if (i < 10) {
+      } else if (i < 10) {
         _periodIndex = 2;
-      }
-      else if (i < 15) {
+      } else if (i < 15) {
         _periodIndex = 3;
-      }
-      else if (i < 20) {
+      } else if (i < 20) {
         _periodIndex = 4;
-      }
-      else {
+      } else {
         _periodIndex = 5;
       }
 
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: Text('【' + _days[_dayIndex] + '曜' + _periodIndex.toString() + '限' + '】'),
+          title: Text('【' +
+              _days[_dayIndex] +
+              '曜' +
+              _periodIndex.toString() +
+              '限' +
+              '】'),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -372,7 +388,8 @@ with SingleTickerProviderStateMixin {
                   context,
                   MaterialPageRoute(
                     settings: const RouteSettings(name: '/tableEdit'),
-                    builder: (BuildContext context) => TableEditView(tableId: i),
+                    builder: (BuildContext context) =>
+                        TableEditView(tableId: i),
                   ),
                 );
 
@@ -391,7 +408,6 @@ with SingleTickerProviderStateMixin {
   }
 
   Future<void> showRegistedClasses(BuildContext context) async {
-
     //クラウド上の授業データをリストに追加
     List<Widget> defaultClassList = <Widget>[];
     defaultClassList = [
@@ -408,7 +424,8 @@ with SingleTickerProviderStateMixin {
       ),
     ];
 
-    DataSnapshot snapshot = await ConnectToDatabase().toCloud(['classes', 'engineering', 'ele_info_phys', '4_semester']);
+    DataSnapshot snapshot = await ConnectToDatabase()
+        .toCloud(['classes', 'engineering', 'ele_info_phys', '4_semester']);
     List<dynamic> cloudClasses = await snapshot.value;
 
     for (Map map in cloudClasses) {
@@ -531,7 +548,12 @@ with SingleTickerProviderStateMixin {
 
     Database database = await ConnectToDatabase().toLocal('tableData');
 
-    String query = 'INSERT INTO tableData(id, className, teacherName, colorId) VALUES($i, "' + map['className'] + '", "' + map['teacherName'] +'", 0)';
+    String query =
+        'INSERT INTO tableData(id, className, teacherName, colorId) VALUES($i, "' +
+            map['className'] +
+            '", "' +
+            map['teacherName'] +
+            '", 0)';
 
     await database.transaction((txn) async {
       txn.rawInsert(query);
@@ -539,11 +561,11 @@ with SingleTickerProviderStateMixin {
   }
 
   Future<void> registIntensiveClass(BuildContext context) async {
-
     String className = _controllerA.text;
     String teacherName = _controllerB.text;
 
-    String query = 'INSERT INTO intensiveClassData(className, teacherName) VALUES("$className", "$teacherName")';
+    String query =
+        'INSERT INTO intensiveClassData(className, teacherName) VALUES("$className", "$teacherName")';
 
     Database database = await ConnectToDatabase().toLocal('intensiveClassData');
 
@@ -565,8 +587,7 @@ with SingleTickerProviderStateMixin {
           ],
         ),
       );
-    }
-    else {
+    } else {
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -587,12 +608,13 @@ with SingleTickerProviderStateMixin {
       FocusScope.of(context).requestFocus(new FocusNode());
     });
   }
-  
+
   Future<void> saveMemo(int id) async {
-    
     Database database = await ConnectToDatabase().toLocal('intensiveClassData');
-    
-    String query = 'UPDATE intensiveClassData set memo = "' + _memoController[id-1].text + '"where id = $id';
+
+    String query = 'UPDATE intensiveClassData set memo = "' +
+        _memoController[id - 1].text +
+        '"where id = $id';
 
     await database.transaction((txn) async {
       txn.rawUpdate(query);
@@ -600,7 +622,6 @@ with SingleTickerProviderStateMixin {
   }
 
   Future<void> deleteTable(int i) async {
-
     Database database = await ConnectToDatabase().toLocal('tableData');
 
     await database.transaction((txn) async {
@@ -611,9 +632,10 @@ with SingleTickerProviderStateMixin {
   Future<void> editIntensiveClass(int id) async {
     Database database = await ConnectToDatabase().toLocal('intensiveClassData');
 
-    List<Map> result = await database.rawQuery('SELECT * FROM intensiveClassData WHERE id = $id');
+    List<Map> result = await database
+        .rawQuery('SELECT * FROM intensiveClassData WHERE id = $id');
 
-    _memoController[id-1].text = result[0]['memo'] ?? '';
+    _memoController[id - 1].text = result[0]['memo'] ?? '';
 
     showDialog(
       context: this.context,
@@ -622,14 +644,9 @@ with SingleTickerProviderStateMixin {
           alignment: WrapAlignment.center,
           direction: Axis.horizontal,
           children: <Widget>[
-            Text(
-              result[0]['className'],
-              style: TextStyle(fontSize: 24.0)
-            ),
-            Text(
-              '（' + result[0]['teacherName'] + '）',
-                style: TextStyle(fontSize: 20.0)
-            ),
+            Text(result[0]['className'], style: TextStyle(fontSize: 24.0)),
+            Text('（' + result[0]['teacherName'] + '）',
+                style: TextStyle(fontSize: 20.0)),
           ],
         ),
         content: SingleChildScrollView(
@@ -648,13 +665,11 @@ with SingleTickerProviderStateMixin {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
-                  controller: _memoController[id-1],
+                  controller: _memoController[id - 1],
                   decoration: InputDecoration(
                     hintText: 'メモを追加',
                   ),
-                  style: TextStyle(
-                      fontSize: 20.0
-                  ),
+                  style: TextStyle(fontSize: 20.0),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                 ),
@@ -664,18 +679,15 @@ with SingleTickerProviderStateMixin {
         ),
         actions: <Widget>[
           FlatButton(
-              child: Text(
-                '削除',
-                style: TextStyle(color: Colors.red)
-              ),
+              child: Text('削除', style: TextStyle(color: Colors.red)),
               onPressed: () async {
                 await database.transaction((txn) async {
-                  txn.rawDelete('DELETE FROM intensiveClassData WHERE id = $id');
+                  txn.rawDelete(
+                      'DELETE FROM intensiveClassData WHERE id = $id');
                 });
                 getIntensiveClasses();
                 Navigator.pop(context);
-              }
-          ),
+              }),
           FlatButton(
             child: Text('メモを保存'),
             onPressed: () async {
@@ -689,14 +701,15 @@ with SingleTickerProviderStateMixin {
   }
 
   Future<void> getTables() async {
-
     Database database = await ConnectToDatabase().toLocal('tableData');
-    
-    List<Map> tableSetClasses = await database.rawQuery('SELECT * FROM tableData');
+
+    List<Map> tableSetClasses =
+        await database.rawQuery('SELECT * FROM tableData');
     for (Map tableSetClass in tableSetClasses) {
       setState(() {
         _tableSetClassNames[tableSetClass['id']] = tableSetClass['className'];
-        _tableSetTeacherNames[tableSetClass['id']] = tableSetClass['teacherName'] ?? '';
+        _tableSetTeacherNames[tableSetClass['id']] =
+            tableSetClass['teacherName'] ?? '';
         _tableSetColorIds[tableSetClass['id']] = tableSetClass['colorId'] ?? 0;
       });
     }
@@ -709,13 +722,14 @@ with SingleTickerProviderStateMixin {
 
 //    database.execute('CREATE TABLE intensiveClassData (id INTEGER PRIMARY KEY, className TEXT, teacherName TEXT, memo TEXT, colorID INTEGER)');
 
-    List<Map> intensiveClasses = await database.rawQuery('SELECT * FROM intensiveClassData');
+    List<Map> intensiveClasses =
+        await database.rawQuery('SELECT * FROM intensiveClassData');
     for (Map intensiveClass in intensiveClasses) {
       list.add(
         ListTile(
           title: Text(intensiveClass['className']),
           subtitle: Text('（' + intensiveClass['teacherName'] + '）'),
-            onTap: () => editIntensiveClass(intensiveClass['id']),
+          onTap: () => editIntensiveClass(intensiveClass['id']),
         ),
       );
     }
@@ -726,16 +740,18 @@ with SingleTickerProviderStateMixin {
       }
       //集中講義が登録されていないとき
       else {
-        _intensiveClassList = [Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: EdgeInsets.only(top: 200.0),
-            child: Text(
-              '登録された集中講義は\nありません。',
-              style: TextStyle(fontSize: 28.0),
+        _intensiveClassList = [
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: EdgeInsets.only(top: 200.0),
+              child: Text(
+                '登録された集中講義は\nありません。',
+                style: TextStyle(fontSize: 28.0),
+              ),
             ),
-          ),
-        )];
+          )
+        ];
       }
 
       //集中講義の登録ボタン
@@ -752,16 +768,14 @@ with SingleTickerProviderStateMixin {
             ),
             padding: EdgeInsets.all(20.0),
             color: Colors.black12,
-            onPressed: ()  {
+            onPressed: () {
               showDialog(
                 context: this.context,
                 builder: (BuildContext context) => AlertDialog(
                   title: Text(
                     '集中講義を登録',
                     style: TextStyle(
-                      fontSize: 28.0,
-                      decoration: TextDecoration.underline
-                    ),
+                        fontSize: 28.0, decoration: TextDecoration.underline),
                   ),
                   titlePadding: EdgeInsets.all(10.0),
                   content: SingleChildScrollView(
@@ -776,9 +790,7 @@ with SingleTickerProviderStateMixin {
                             children: <Widget>[
                               Text(
                                 '【授業名】',
-                                style: TextStyle(
-                                    fontSize: 20.0
-                                ),
+                                style: TextStyle(fontSize: 20.0),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(5.0),
@@ -789,9 +801,7 @@ with SingleTickerProviderStateMixin {
                                 decoration: InputDecoration(
                                   hintText: '必須',
                                 ),
-                                style: TextStyle(
-                                    fontSize: 20.0
-                                ),
+                                style: TextStyle(fontSize: 20.0),
                               )
                             ],
                           ),
@@ -800,15 +810,14 @@ with SingleTickerProviderStateMixin {
                           padding: EdgeInsets.all(30.0),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 0.0),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Text(
                                   '【教師・講師名】',
-                                  style: TextStyle(
-                                      fontSize: 20.0
-                                  ),
+                                  style: TextStyle(fontSize: 20.0),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(5.0),
@@ -816,12 +825,9 @@ with SingleTickerProviderStateMixin {
                                 TextField(
                                   controller: _controllerB,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 20.0
-                                  ),
+                                  style: TextStyle(fontSize: 20.0),
                                 ),
-                              ]
-                          ),
+                              ]),
                         ),
                       ],
                     ),
@@ -847,7 +853,6 @@ with SingleTickerProviderStateMixin {
         ),
       );
 
-
       for (var i = 0; i < _intensiveClassList.length - 1; i++) {
         _memoController.add(TextEditingController());
       }
@@ -857,7 +862,6 @@ with SingleTickerProviderStateMixin {
 
 //登録した時間割の詳細情報を編集する画面
 class TableEditView extends StatefulWidget {
-
   final int tableId;
 
   TableEditView({Key key, @required this.tableId}) : super(key: key);
@@ -867,7 +871,6 @@ class TableEditView extends StatefulWidget {
 }
 
 class _TableEditViewState extends State<TableEditView> {
-
   final int tableId;
 
   _TableEditViewState(this.tableId);
@@ -884,95 +887,93 @@ class _TableEditViewState extends State<TableEditView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: AppBar(
-        title: Text('授業の詳細'),
-        leading: BackButton(
-          color: Colors.white,
+        appBar: AppBar(
+          title: Text('授業の詳細'),
+          leading: BackButton(
+            color: Colors.white,
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Text(
+                '取消',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            IconButton(
+              icon: Text(
+                '保存',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              onPressed: () async {
+                await saveData();
+                Navigator.pop(context, tableSetColorId);
+              },
+            ),
+          ],
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Text(
-              '取消',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            onPressed: () => Navigator.pop(context),
-          ),
-          IconButton(
-            icon: Text(
-              '保存',
-              style: TextStyle(fontSize: 16.0),
-            ),
-            onPressed: () async {
-              await saveData();
-              Navigator.pop(context, tableSetColorId);
-            },
-          ),
-        ],
-      ),
-      body: Container(
-      color: ConstantValues().getColorList(200)[tableSetColorId],
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        '【メモ】',
-                        style: TextStyle(
-                          fontSize: 24.0,
+        body: Container(
+          color: ConstantValues().getColorList(200)[tableSetColorId],
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) =>
+                SingleChildScrollView(
+                    child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '【メモ】',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(20.0),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: TextField(
+                        controller: _memoController,
+                        decoration: InputDecoration(
+                          hintText: 'メモを追加',
                         ),
+                        style: TextStyle(fontSize: 20.0),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(20.0),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(20.0),
+                    ),
+                    Text(
+                      '【背景色の選択】',
+                      style: TextStyle(
+                        fontSize: 24.0,
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        child: TextField(
-                          controller: _memoController,
-                          decoration: InputDecoration(
-                            hintText: 'メモを追加',
-                          ),
-                          style: TextStyle(
-                              fontSize: 20.0
-                          ),
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(20.0),
-                      ),
-                      Text(
-                        '【背景色の選択】',
-                        style: TextStyle(
-                          fontSize: 24.0,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10.0),
-                      ),
-                      GridView.extent(
-                        shrinkWrap: true,
-                        maxCrossAxisExtent: (MediaQuery.of(context).size.width - 100.0) / 4,
-                        mainAxisSpacing: 20.0,
-                        crossAxisSpacing: 20.0,
-                        childAspectRatio: (1),
-                        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-                        children: colorsView(context),
-                      ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                    ),
+                    GridView.extent(
+                      shrinkWrap: true,
+                      maxCrossAxisExtent:
+                          (MediaQuery.of(context).size.width - 100.0) / 4,
+                      mainAxisSpacing: 20.0,
+                      crossAxisSpacing: 20.0,
+                      childAspectRatio: (1),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 20.0, horizontal: 50.0),
+                      children: colorsView(context),
+                    ),
+                  ],
                 ),
-              )
+              ),
+            )),
           ),
-        ),
-      )
-    );
+        ));
   }
 
   List<Widget> colorsView(BuildContext context) {
@@ -1003,10 +1004,10 @@ class _TableEditViewState extends State<TableEditView> {
   }
 
   Future<void> getClassDetail() async {
-
     Database database = await ConnectToDatabase().toLocal('tableData');
 
-    List<Map> tableSetClass = await database.rawQuery('SELECT * FROM tableData WHERE id = $tableId');
+    List<Map> tableSetClass =
+        await database.rawQuery('SELECT * FROM tableData WHERE id = $tableId');
 
     setState(() {
       _memoController.text = tableSetClass[0]['memo'] ?? '';
@@ -1015,10 +1016,11 @@ class _TableEditViewState extends State<TableEditView> {
   }
 
   Future<void> saveData() async {
-
     Database database = await ConnectToDatabase().toLocal('tableData');
 
-    String query = 'UPDATE tableData set memo = "' + _memoController.text + '", colorId = $tableSetColorId where id = $tableId';
+    String query = 'UPDATE tableData set memo = "' +
+        _memoController.text +
+        '", colorId = $tableSetColorId where id = $tableId';
 
     await database.transaction((txn) async {
       txn.rawUpdate(query);
@@ -1028,7 +1030,6 @@ class _TableEditViewState extends State<TableEditView> {
 
 //授業をカスタムで新規登録する画面
 class ClassRegistView extends StatefulWidget {
-
   ClassRegistView({Key key}) : super(key: key);
 
   @override
@@ -1036,20 +1037,18 @@ class ClassRegistView extends StatefulWidget {
 }
 
 class _ClassRegistViewState extends State<ClassRegistView> {
-
   final TextEditingController _controllerA = TextEditingController();
   final TextEditingController _controllerB = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         title: Text('授業の登録'),
       ),
-
       body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) => SingleChildScrollView(
+        builder: (BuildContext context, BoxConstraints constraints) =>
+            SingleChildScrollView(
 //          physics: AlwaysScrollableScrollPhysics(),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -1059,15 +1058,14 @@ class _ClassRegistViewState extends State<ClassRegistView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             '【授業名】',
-                            style: TextStyle(
-                              fontSize: 20.0
-                            ),
+                            style: TextStyle(fontSize: 20.0),
                           ),
                           Padding(
                             padding: EdgeInsets.all(10.0),
@@ -1078,26 +1076,22 @@ class _ClassRegistViewState extends State<ClassRegistView> {
                             decoration: InputDecoration(
                               hintText: '必須',
                             ),
-                            style: TextStyle(
-                                fontSize: 20.0
-                            ),
+                            style: TextStyle(fontSize: 20.0),
                           ),
-                        ]
-                    ),
+                        ]),
                   ),
                   Padding(
                     padding: EdgeInsets.all(50.0),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
                             '【教師・講師名】',
-                            style: TextStyle(
-                                fontSize: 20.0
-                            ),
+                            style: TextStyle(fontSize: 20.0),
                           ),
                           Padding(
                             padding: EdgeInsets.all(10.0),
@@ -1105,12 +1099,9 @@ class _ClassRegistViewState extends State<ClassRegistView> {
                           TextField(
                             controller: _controllerB,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 20.0
-                            ),
+                            style: TextStyle(fontSize: 20.0),
                           ),
-                        ]
-                    ),
+                        ]),
                   ),
                 ],
               ),
@@ -1118,13 +1109,11 @@ class _ClassRegistViewState extends State<ClassRegistView> {
           ),
         ),
       ),
-      
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
         items: ConstantValues().getBottomNavigationBarItems(),
         onTap: (int value) => tapBottomIcon(value, context),
       ),
-
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () => registData(context),
@@ -1135,18 +1124,17 @@ class _ClassRegistViewState extends State<ClassRegistView> {
   void tapBottomIcon(int value, BuildContext context) {
     if (value == 0) {
       Navigator.pop(context);
-    }
-    else if(value == 2) {
+    } else if (value == 2) {
       Navigator.popAndPushNamed(context, '/confirm');
     }
   }
 
   void registData(BuildContext context) async {
-
     String className = _controllerA.text;
     String teacherName = _controllerB.text;
 
-    String query = 'INSERT INTO classData(className, teacherName) VALUES("$className", "$teacherName")';
+    String query =
+        'INSERT INTO classData(className, teacherName) VALUES("$className", "$teacherName")';
 
     Database database = await ConnectToDatabase().toLocal('classData');
 
@@ -1168,8 +1156,7 @@ class _ClassRegistViewState extends State<ClassRegistView> {
           ],
         ),
       );
-    }
-    else {
+    } else {
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -1195,18 +1182,17 @@ class _ClassRegistViewState extends State<ClassRegistView> {
 //クラウドに登録されている授業と、カスタムで追加登録した授業の一覧を閲覧する画面
 //クラウドデータベースはFirebase Realtime Databaseを用いる。
 class ClassConfirmView extends StatefulWidget {
-
   final int hierarchyDepth;
 
   ClassConfirmView({Key key, this.hierarchyDepth: 3}) : super(key: key);
 
   @override
-  _ClassConfirmViewState createState() => _ClassConfirmViewState(hierarchyDepth);
+  _ClassConfirmViewState createState() =>
+      _ClassConfirmViewState(hierarchyDepth);
 }
 
 class _ClassConfirmViewState extends State<ClassConfirmView>
-with SingleTickerProviderStateMixin {
-
+    with SingleTickerProviderStateMixin {
   final List<Tab> _tabs = <Tab>[
     Tab(text: 'デフォルトの授業'),
     Tab(text: '登録した授業'),
@@ -1241,7 +1227,6 @@ with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         title: Text('授業一覧'),
         bottom: TabBar(
@@ -1249,7 +1234,6 @@ with SingleTickerProviderStateMixin {
           tabs: _tabs,
         ),
       ),
-
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
@@ -1263,7 +1247,6 @@ with SingleTickerProviderStateMixin {
           ),
         ],
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 2,
         items: ConstantValues().getBottomNavigationBarItems(),
@@ -1273,7 +1256,6 @@ with SingleTickerProviderStateMixin {
   }
 
   Future<void> getDefaultClasses(int hierarchyDepth) async {
-
     List<Widget> list = <Widget>[];
 
     List<String> depth = <String>['classes'];
@@ -1288,23 +1270,21 @@ with SingleTickerProviderStateMixin {
 
       list.add(
         ListTile(
-          title: Text(
-            title,
-            style: TextStyle(fontSize: 28.0)
-          ),
+          title: Text(title, style: TextStyle(fontSize: 28.0)),
           onTap: () {
             Navigator.push(
               this.context,
-              MaterialPageRoute(builder: (context) =>
-                  ClassConfirmView(hierarchyDepth: hierarchyDepth + 1,),
+              MaterialPageRoute(
+                builder: (context) => ClassConfirmView(
+                  hierarchyDepth: hierarchyDepth + 1,
+                ),
               ),
             );
           },
           contentPadding: EdgeInsets.all(20.0),
         ),
       );
-    }
-    else {
+    } else {
       List<dynamic> classList = await snapshot.value;
 
       for (Map classData in classList) {
@@ -1349,13 +1329,11 @@ with SingleTickerProviderStateMixin {
     List<Map> result = await database.rawQuery('SELECT * FROM classData');
 
     for (Map map in result) {
-      list.add(
-        ListTile(
-          title: Text(map['className']),
-          subtitle: Text('（' + map['teacherName'] + '）'),
-          onTap: () => unregistClass(map['id']),
-        )
-      );
+      list.add(ListTile(
+        title: Text(map['className']),
+        subtitle: Text('（' + map['teacherName'] + '）'),
+        onTap: () => unregistClass(map['id']),
+      ));
     }
 
     setState(() {
@@ -1364,50 +1342,54 @@ with SingleTickerProviderStateMixin {
       }
       //登録されたデータが１つもないとき
       else {
-        _customClasses = [Align(
-          alignment: Alignment.center,
-          child: Padding(
-            padding: EdgeInsets.only(top: 250.0),
-            child: Text(
-              '登録された授業は\nありません。',
-              style: TextStyle(fontSize: 28.0),
+        _customClasses = [
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: EdgeInsets.only(top: 250.0),
+              child: Text(
+                '登録された授業は\nありません。',
+                style: TextStyle(fontSize: 28.0),
+              ),
             ),
-          ),
-        )];
+          )
+        ];
       }
     });
   }
 
   Future<void> unregistClass(int id) async {
-
     Database database = await ConnectToDatabase().toLocal('classData');
 
-    List<Map> result = await database.rawQuery('SELECT * FROM classData WHERE id = $id');
+    List<Map> result =
+        await database.rawQuery('SELECT * FROM classData WHERE id = $id');
 
     showDialog(
       context: this.context,
       builder: (BuildContext context) => AlertDialog(
-        title: Text(result[0]['className'],textAlign: TextAlign.center,),
-        content: Text('（' + result[0]['teacherName'] + '）', textAlign: TextAlign.center,),
-       actions: <Widget>[
-         FlatButton(
-           child: Text(
-               '削除',
-               style: TextStyle(color: Colors.red)
-           ),
-           onPressed: () async {
-             await database.transaction((txn) async {
-               txn.rawDelete('DELETE FROM classData WHERE id = $id');
-             });
-             getCustomClasses();
-             Navigator.pop(context);
-           }
-         ),
-         FlatButton(
-           child: Text('閉じる'),
-           onPressed: () => Navigator.pop(context),
-         ),
-       ],
+        title: Text(
+          result[0]['className'],
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          '（' + result[0]['teacherName'] + '）',
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          FlatButton(
+              child: Text('削除', style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                await database.transaction((txn) async {
+                  txn.rawDelete('DELETE FROM classData WHERE id = $id');
+                });
+                getCustomClasses();
+                Navigator.pop(context);
+              }),
+          FlatButton(
+            child: Text('閉じる'),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
       ),
     );
   }
@@ -1415,8 +1397,7 @@ with SingleTickerProviderStateMixin {
   void tapBottomIcon(int value, BuildContext context) {
     if (value == 0) {
       Navigator.pop(context);
-    }
-    else if(value == 1) {
+    } else if (value == 1) {
       Navigator.popAndPushNamed(context, '/regist');
     }
   }
@@ -1424,46 +1405,36 @@ with SingleTickerProviderStateMixin {
 
 //複数個所で使われる定数やWidgetをまとめたクラス
 class ConstantValues {
-
   List<Color> tableColors = <Color>[];
-  List<BottomNavigationBarItem> bottomNavigationBarItems = <BottomNavigationBarItem>[];
+  List<BottomNavigationBarItem> bottomNavigationBarItems =
+      <BottomNavigationBarItem>[];
 
   //Color型のリストを取得
   List<Color> getColorList(int opacity) {
-
     tableColors = [
-      Color.fromARGB(opacity, 255, 255, 255),//0 <-デフォルト値（白透明）
-      Color.fromARGB(opacity, 245, 176, 144),//1
-      Color.fromARGB(opacity, 252, 215, 161),//2
-      Color.fromARGB(opacity, 255, 249, 177),//3
-      Color.fromARGB(opacity, 215, 231, 175),//4
-      Color.fromARGB(opacity, 165, 212, 173),//5
-      Color.fromARGB(opacity, 162, 215, 212),//6
-      Color.fromARGB(opacity, 159, 217, 246),//7
-      Color.fromARGB(opacity, 163, 188, 226),//8
-      Color.fromARGB(opacity, 165, 154, 202),//9
-      Color.fromARGB(opacity, 207, 167, 205),//10
-      Color.fromARGB(opacity, 244, 180, 208),//11
+      Color.fromARGB(opacity, 255, 255, 255), //0 <-デフォルト値（白透明）
+      Color.fromARGB(opacity, 245, 176, 144), //1
+      Color.fromARGB(opacity, 252, 215, 161), //2
+      Color.fromARGB(opacity, 255, 249, 177), //3
+      Color.fromARGB(opacity, 215, 231, 175), //4
+      Color.fromARGB(opacity, 165, 212, 173), //5
+      Color.fromARGB(opacity, 162, 215, 212), //6
+      Color.fromARGB(opacity, 159, 217, 246), //7
+      Color.fromARGB(opacity, 163, 188, 226), //8
+      Color.fromARGB(opacity, 165, 154, 202), //9
+      Color.fromARGB(opacity, 207, 167, 205), //10
+      Color.fromARGB(opacity, 244, 180, 208), //11
     ];
 
     return tableColors;
   }
 
   List<BottomNavigationBarItem> getBottomNavigationBarItems() {
-
     bottomNavigationBarItems = [
       BottomNavigationBarItem(
-          title: Text('My時間割'),
-          icon: Icon(Icons.calendar_today)
-      ),
-      BottomNavigationBarItem(
-          title: Text('授業を登録'),
-          icon: Icon(Icons.add)
-      ),
-      BottomNavigationBarItem(
-          title: Text('授業一覧'),
-          icon: Icon(Icons.list)
-      ),
+          title: Text('My時間割'), icon: Icon(Icons.calendar_today)),
+      BottomNavigationBarItem(title: Text('授業を登録'), icon: Icon(Icons.add)),
+      BottomNavigationBarItem(title: Text('授業一覧'), icon: Icon(Icons.list)),
     ];
 
     return bottomNavigationBarItems;
@@ -1472,39 +1443,45 @@ class ConstantValues {
 
 //データベースに接続するための処理をまとめたクラス
 class ConnectToDatabase {
-
   //ローカルデータベースに接続
   Future<Database> toLocal(String databaseTableName) async {
-
     String _query;
 
     switch (databaseTableName) {
-      case 'classData': {
-        _query = 'id INTEGER PRIMARY KEY, className TEXT, teacherName TEXT';
-      }
-      break;
+      case 'classData':
+        {
+          _query = 'id INTEGER PRIMARY KEY, className TEXT, teacherName TEXT';
+        }
+        break;
 
-      case 'tableData': {
-        _query = 'id INTEGER PRIMARY KEY, className TEXT, teacherName TEXT, memo TEXT, colorId INTEGER';
-      }
-      break;
+      case 'tableData':
+        {
+          _query =
+              'id INTEGER PRIMARY KEY, className TEXT, teacherName TEXT, memo TEXT, colorId INTEGER';
+        }
+        break;
 
-      case 'intensiveClassData': {
-        _query = 'id INTEGER PRIMARY KEY, className TEXT, teacherName TEXT, memo TEXT, colorID INTEGER';
-      }
-      break;
+      case 'intensiveClassData':
+        {
+          _query =
+              'id INTEGER PRIMARY KEY, className TEXT, teacherName TEXT, memo TEXT, colorID INTEGER';
+        }
+        break;
 
-      default: {
-        _query = '';
-      }
-      break;
+      default:
+        {
+          _query = '';
+        }
+        break;
     }
 
     String dbPath = await getDatabasesPath();
     String path = join(dbPath, "timetable_for_students2.db");
 
-    Database database = await openDatabase(path, version: 1,onCreate: (Database db, int version) async {
-      await db.execute('CREATE TABLE IF NOT EXISTS $databaseTableName ($_query)');
+    Database database = await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+      await db
+          .execute('CREATE TABLE IF NOT EXISTS $databaseTableName ($_query)');
     });
 
     return database;
@@ -1512,8 +1489,7 @@ class ConnectToDatabase {
 
   //クラウドのデータベース（Firebase Realtime Database）に接続
   Future<DataSnapshot> toCloud(List<String> childList) async {
-
-    DatabaseReference _reference =  FirebaseDatabase.instance.reference();
+    DatabaseReference _reference = FirebaseDatabase.instance.reference();
 
     for (var i = 0; i < childList.length; i++) {
       _reference = _reference.child(childList[i]);
