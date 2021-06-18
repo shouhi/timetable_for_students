@@ -1,9 +1,10 @@
 # timetable_for_students
-<<<<<<< HEAD
-Flutter×Firebaseで開発した時間割アプリです。
-=======
 
-大学生のための時間割アプリです。
+Flutter×Firebaseで開発した時間割アプリです。
+
+
+
+大学生のための時間割アプリ（デモアプリ）。
 
 ## Getting Started
 
